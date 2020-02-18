@@ -42,8 +42,6 @@ const printCells = (state) => {
     }
     grid += row.join(' ') + '\n';
   }
-  console.log(bottomLeft, topRight);
-  console.log(grid);
   return grid;
 };
 
