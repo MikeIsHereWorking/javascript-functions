@@ -45,17 +45,46 @@ const printCells = (state) => {
   return grid;
 };
 
-const getNeighborsOf = ([x, y]) => {};
+const getNeighborsOf = ([x, y]) => {
+  return [[x-1,y-1],[x, y-1], [x+1, y-1], [x-1, y], [x+1,y],[x-1,y+1],[x,y+1], [x+1,y+1]];
+};
 
-const getLivingNeighbors = (cell, state) => {};
+const getLivingNeighbors = (cell, state) => {
+  let neighbors = getNeighborsOf(cell);
+  let x= neighbors.filter(c=> contains.bind(state)(c));
+  return x;
+};
 
-const willBeAlive = (cell, state) => {};
+const willBeAlive = (cell, state) => {
+  let livingNeighbors = getLivingNeighbors(cell,state).length;
+  return (livingNeighbors === 3 || contains.call(state,cell) && livingNeighbors === 2);
+};
 
-const calculateNext = (state) => {};
+const calculateNext = (state) => {
+  let {topRight, bottomLeft} = corners(state);
+  let results = [];
+  for (let y=topRight[1]+1; y>=bottomLeft[1]-1; y--) 
+    for (let x=bottomLeft[0]-1; x<= topRight[0]+1; x++ ) {      
+      if (willBeAlive([x,y], state))
+        results.push([x,y]);    
+    }  
+  return results;
+};
 
-const iterate = (state, iterations) => {};
+const iterate = (state, iterations) => {
+  let results =[state]; 
 
-const main = (pattern, iterations) => {};
+  for(let i=0; i<iterations; i++)   
+    results.push(calculateNext(results[results.length-1]));
+
+  return results;
+};
+
+const main = (pattern, iterations) => {
+  let results = iterate(startPatterns[pattern], iterations);
+  results.forEach(p=>console.log(printCells(p)));
+
+};
 
 const startPatterns = {
     rpentomino: [
@@ -81,7 +110,18 @@ const startPatterns = {
       [2, 1],
       [1, 2],
       [2, 2]
-    ]
+    ],
+    square3: [
+      [1, 1],
+      [2, 1],
+      [3, 1],
+      [1, 2],
+      [2, 2],
+      [3, 2],
+      [1, 3],
+      [2, 3],
+      [3, 3]
+    ],
   };
   
   const [pattern, iterations] = process.argv.slice(2);
