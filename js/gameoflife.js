@@ -11,11 +11,41 @@ function contains(cell) {
   return this.some(c=> same(c,cell));
 }
 
-const printCell = (cell, state) => {};
+const printCell = (cell, state) => {
+  return contains.call(state, cell) ? '\u25A3' : '\u25A2';
+};
 
-const corners = (state = []) => {};
+const corners = (state = []) => {
+  let rObject = {topRight: [0,0], bottomLeft: [0,0]};
 
-const printCells = (state) => {};
+  if (state.length === 0 ) return rObject;
+
+  let xs = state.map(([x, _])=> x);
+  let ys = state.map(([_, y])=> y);
+
+  rObject.topRight[0] = Math.max(...xs);
+  rObject.topRight[1] = Math.max(...ys);
+  rObject.bottomLeft[0] = Math.min(...xs);
+  rObject.bottomLeft[1] = Math.min(...ys);
+  return rObject;
+};
+
+const printCells = (state) => {
+  const {topRight, bottomLeft} = corners(state);
+  
+  let grid = "";
+  
+  for (let y = topRight[1]; y>=bottomLeft[1]; y--) {    
+    let row = [];
+    for (let x = bottomLeft[0]; x<=topRight[0]; x++ ) {
+        row.push(printCell([x,y], state));
+    }
+    grid += row.join(' ') + '\n';
+  }
+  console.log(bottomLeft, topRight);
+  console.log(grid);
+  return grid;
+};
 
 const getNeighborsOf = ([x, y]) => {};
 
